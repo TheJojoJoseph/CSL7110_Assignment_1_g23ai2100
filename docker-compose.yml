@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  hadoop:
+    image: bde2020/hadoop-namenode:latest
+    container_name: hadoop-namenode
+    ports:
+      - "9870:9870" # Web UI
+      - "9000:9000" # HDFS
+    environment:
+      - CLUSTER_NAME=test-cluster
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+    networks:
+      - hadoop-net
+
+  datanode:
+    image: bde2020/hadoop-datanode:latest
+    container_name: hadoop-datanode
+    ports:
+      - "9864:9864" # Datanode UI
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://hadoop:9000
+    volumes:
+      - hadoop_datanode:/hadoop/dfs/data
+    depends_on:
+      - hadoop
+    networks:
+      - hadoop-net
+
+  spark:
+    image: bde2020/spark-master:latest
+    container_name: spark-master
+    ports:
+      - "8080:8080" # Spark Web UI
+      - "7077:7077" # Spark Master Port
+    environment:
+      - SPARK_MASTER_HOST=spark-master
+    networks:
+      - hadoop-net
+    depends_on:
+      - hadoop
+
+  spark-worker:
+    image: bde2020/spark-worker:latest
+    container_name: spark-worker
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+    networks:
+      - hadoop-net
+    depends_on:
+      - spark
+    ports:
+      - "8081:8081" # Spark Worker Web UI
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode:
+
+networks:
+  hadoop-net:
