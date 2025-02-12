@@ -1,3 +1,9 @@
+// Run the following commands to compile and run the WordCount program:
+
+// javac -classpath `hadoop classpath` -d . WordCount.java
+// jar -cvf WordCount.jar -C . .
+
+
 import java.io.IOException;
 import java.util.StringTokenizer;
 
