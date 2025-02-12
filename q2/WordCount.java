@@ -1,3 +1,4 @@
+package CSL7110_Assignment_1_g23ai2100.q2;
 
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
